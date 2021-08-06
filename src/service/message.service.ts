@@ -23,7 +23,7 @@ function sanction(msg: Message) {
 
         let embed: MessageEmbed = new MessageEmbed()
             .setAuthor(msg.author.tag, msg.author.displayAvatarURL({dynamic: true}))
-            .setDescription("Deleted Message!")
+            .setDescription(`Deleted message in <#${msg.channel.id}>`)
             .addField("Message Content:", msg.content)
             .setFooter(msg.author.id, "");
 
