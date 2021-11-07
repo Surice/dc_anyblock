@@ -46,7 +46,7 @@ function checkMessageContent(msg) {
     return __awaiter(this, void 0, void 0, function () {
         var linkList;
         return __generator(this, function (_a) {
-            if (msg.mentions.has(__1.client.user)) {
+            if (msg.mentions.users.filter(function (user) { return user == __1.client.user; }).size > 0) {
                 command_service_1.handleCommands(msg);
                 return [2 /*return*/];
             }

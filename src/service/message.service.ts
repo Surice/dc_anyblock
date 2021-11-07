@@ -7,7 +7,7 @@ import { handleCommands } from "./command.service";
 const config = JSON.parse(readFileSync(`${__dirname}/../../config.json`, "utf-8").toString());
 
 export async function checkMessageContent(msg: Message): Promise<void> {
-    if(msg.mentions.has(client.user as User)) {
+    if(msg.mentions.users.filter(user => user == client.user as User).size > 0) {
         handleCommands(msg);
 
         return
