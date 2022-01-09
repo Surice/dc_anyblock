@@ -12,11 +12,12 @@ const config = JSON.parse(readFileSync(`${__dirname}/../config.json`, "utf-8").t
 client.login(config.token);
 
 client.on('ready', async () => {
-    console.log(`Ready as ${client.user?.tag} \n`);
+    console.log(`Ready as ${client.user?.tag}`);
 });
 
 
 client.on('messageCreate', (msg: Message) => {
+    console.log("msg in");
     checkMessageContent(msg);
 });
 

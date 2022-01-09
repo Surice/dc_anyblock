@@ -47,11 +47,12 @@ client.login(config.token);
 client.on('ready', function () { return __awaiter(void 0, void 0, void 0, function () {
     var _a;
     return __generator(this, function (_b) {
-        console.log("Ready as " + ((_a = client.user) === null || _a === void 0 ? void 0 : _a.tag) + " \n");
+        console.log("Ready as " + ((_a = client.user) === null || _a === void 0 ? void 0 : _a.tag));
         return [2 /*return*/];
     });
 }); });
 client.on('messageCreate', function (msg) {
+    console.log("msg in");
     message_service_1.checkMessageContent(msg);
 });
 client.on('guildMemberAdd', function (member) {

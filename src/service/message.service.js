@@ -46,10 +46,12 @@ function checkMessageContent(msg) {
     return __awaiter(this, void 0, void 0, function () {
         var linkList;
         return __generator(this, function (_a) {
-            if (msg.mentions.users.filter(function (user) { return user == __1.client.user; }).size > 0) {
+            if (msg.mentions.has(__1.client.user)) {
+                console.log("Command detected");
                 command_service_1.handleCommands(msg);
                 return [2 /*return*/];
             }
+            console.log("loading blacklist");
             linkList = JSON.parse(fs_1.readFileSync(__dirname + "/../__shared/data/links.json").toString());
             if (msg.content.includes("@everyone") && !msg.mentions.everyone)
                 sanction(msg);

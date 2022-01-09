@@ -47,9 +47,15 @@ function handleCommands(msg) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    if (!authMember(msg.member))
+                    if (!authMember(msg.member)) {
+                        msg.reply("Unathorized").catch(function (err) { return console.log(err); });
                         return [2 /*return*/];
-                    content = msg.content.split(" ")[1];
+                    }
+                    content = msg.content.split(" ").slice(1).join(' ');
+                    if (content.length <= 0) {
+                        msg.reply("please provide Word or Link");
+                        return [2 /*return*/];
+                    }
                     return [4 /*yield*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
                             var checkFunction;
                             var _this = this;
@@ -103,7 +109,7 @@ function handleCommands(msg) {
                                                                 label: "Decline"
                                                             })]
                                                     })]
-                                            })];
+                                            }).catch(function (err) { return console.log(err); })];
                                     case 1:
                                         _a.sent();
                                         __1.client.addListener("interactionCreate", checkFunction);

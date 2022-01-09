@@ -3,9 +3,18 @@ import { readFileSync, writeFileSync } from "fs";
 import { client } from "..";
 
 export async function handleCommands(msg: Message): Promise<void> {
-    if (!authMember(msg.member)) return;
+    if (!authMember(msg.member)) {
+        msg.reply("Unathorized").catch(err => console.log(err));
+        return;
+    }
 
-    const content: string = msg.content.split(" ")[1];
+    const content: string = msg.content.split(" ").slice(1).join(' ');
+
+    if(content.length <= 0) {
+        msg.reply("please provide Word or Link").catch(err => console.log(err));
+
+        return;
+    }
 
     const confirm: boolean = await new Promise(async (resolve) => {
         let checkFunction = async (interaction: Interaction) => {
@@ -49,7 +58,7 @@ export async function handleCommands(msg: Message): Promise<void> {
                     label: "Decline"
                 })]
             })]
-        });
+        }).catch(err => console.log(err));
 
         client.addListener("interactionCreate", checkFunction);
     });

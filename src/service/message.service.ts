@@ -7,12 +7,14 @@ import { handleCommands } from "./command.service";
 const config = JSON.parse(readFileSync(`${__dirname}/../../config.json`, "utf-8").toString());
 
 export async function checkMessageContent(msg: Message): Promise<void> {
-    if(msg.mentions.users.filter(user => user == client.user as User).size > 0) {
+    if(msg.mentions.has(client.user as User)) {
+        console.log("Command detected");
         handleCommands(msg);
 
         return
     }
 
+    console.log("loading blacklist");
     const linkList: string[] = JSON.parse(readFileSync(`${__dirname}/../__shared/data/links.json`).toString());
 
     if(msg.content.includes("@everyone") && !msg.mentions.everyone) sanction(msg);
