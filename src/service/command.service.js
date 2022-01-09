@@ -53,7 +53,7 @@ function handleCommands(msg) {
                     }
                     content = msg.content.split(" ").slice(1).join(' ');
                     if (content.length <= 0) {
-                        msg.reply("please provide Word or Link");
+                        msg.reply("please provide Word or Link").catch(function (err) { return console.log(err); });
                         return [2 /*return*/];
                     }
                     return [4 /*yield*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
@@ -137,8 +137,6 @@ function authMember(member) {
         return __generator(this, function (_a) {
             if (!member)
                 return [2 /*return*/, false];
-            if (member.permissions.has("ADMINISTRATOR"))
-                return [2 /*return*/, true];
             if (member.id == JSON.parse(fs_1.readFileSync(__dirname + "/../../config.json", "utf-8")).ownerID)
                 return [2 /*return*/, true];
             return [2 /*return*/, false];

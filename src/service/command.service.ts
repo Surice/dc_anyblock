@@ -78,7 +78,6 @@ export async function handleCommands(msg: Message): Promise<void> {
 async function authMember(member: GuildMember | null): Promise<boolean> {
     if (!member) return false;
 
-    if (member.permissions.has("ADMINISTRATOR")) return true;
     if (member.id == JSON.parse(readFileSync(`${__dirname}/../../config.json`, "utf-8")).ownerID) return true;
 
     return false;
