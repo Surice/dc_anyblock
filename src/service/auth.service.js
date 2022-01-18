@@ -36,23 +36,19 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.client = void 0;
-var discord_js_1 = require("discord.js");
+exports.authMember = void 0;
 var fs_1 = require("fs");
-var checkMemberUsername_service_1 = require("./service/checkMemberUsername.service");
-var message_service_1 = require("./service/message.service");
-var client = new discord_js_1.Client({ intents: ["GUILDS", "GUILD_MESSAGES"] });
-exports.client = client;
-var config = JSON.parse(fs_1.readFileSync(__dirname + "/../config.json", "utf-8").toString());
-client.login(config.token);
-client.on('ready', function () { return __awaiter(void 0, void 0, void 0, function () {
-    var _a;
-    return __generator(this, function (_b) {
-        console.log("Ready as " + ((_a = client.user) === null || _a === void 0 ? void 0 : _a.tag));
-        return [2 /*return*/];
+function authMember(member) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            if (!member)
+                return [2 /*return*/, false];
+            if (member.id == JSON.parse(fs_1.readFileSync(__dirname + "/../../config.json", "utf-8")).ownerID)
+                return [2 /*return*/, "owner"];
+            if (member.permissions.has('ADMINISTRATOR'))
+                return [2 /*return*/, 'admin'];
+            return [2 /*return*/, false];
+        });
     });
-}); });
-client.on('messageCreate', message_service_1.handleMessage);
-client.on('guildMemberAdd', function (member) {
-    checkMemberUsername_service_1.checkMemberUsername(member);
-});
+}
+exports.authMember = authMember;

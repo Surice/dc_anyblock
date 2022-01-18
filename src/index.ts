@@ -1,14 +1,15 @@
 import { Client, GuildMember, Message } from "discord.js";
 import { readFileSync } from "fs";
-import { checkMessageContent } from "./service/message.service";
+import { checkMemberUsername } from "./service/checkMemberUsername.service";
+import { handleMessage } from "./service/message.service";
+import { Config } from "./__shared/models/config.model";
 
 
 const client: Client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES"]});
 
 export { client };
 
-const config = JSON.parse(readFileSync(`${__dirname}/../config.json`, "utf-8").toString());
-
+const config: Config = JSON.parse(readFileSync(`${__dirname}/../config.json`, "utf-8").toString());
 client.login(config.token);
 
 client.on('ready', async () => {
@@ -16,11 +17,8 @@ client.on('ready', async () => {
 });
 
 
-client.on('messageCreate', (msg: Message) => {
-    console.log("msg in");
-    checkMessageContent(msg);
-});
+client.on('messageCreate', handleMessage);
 
 client.on('guildMemberAdd', (member: GuildMember) => {
-    // checkMemberUsername(member);
+    checkMemberUsername(member);
 });

@@ -37,109 +37,37 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleCommands = void 0;
-var discord_js_1 = require("discord.js");
-var fs_1 = require("fs");
-var __1 = require("..");
+var admin_command_1 = require("../commands/admin.command");
+var auth_service_1 = require("./auth.service");
 function handleCommands(msg) {
     return __awaiter(this, void 0, void 0, function () {
-        var content, confirm, links;
-        var _this = this;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var content, _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
-                    if (!authMember(msg.member)) {
+                    if (!msg.guild)
+                        return [2 /*return*/];
+                    return [4 /*yield*/, auth_service_1.authMember(msg.member)];
+                case 1:
+                    if (!(_b.sent())) {
                         msg.reply("Unathorized").catch(function (err) { return console.log(err); });
                         return [2 /*return*/];
                     }
-                    content = msg.content.split(" ").slice(1).join(' ');
-                    if (content.length <= 0) {
-                        msg.reply("please provide Word or Link").catch(function (err) { return console.log(err); });
+                    content = msg.content.split(" ").slice(1);
+                    _a = content[0] == "admin";
+                    if (!_a) return [3 /*break*/, 3];
+                    return [4 /*yield*/, auth_service_1.authMember(msg.member)];
+                case 2:
+                    _a = (_b.sent()) == "owner";
+                    _b.label = 3;
+                case 3:
+                    if (_a) {
+                        admin_command_1.adminMain(msg, content.slice(1));
                         return [2 /*return*/];
                     }
-                    return [4 /*yield*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
-                            var checkFunction;
-                            var _this = this;
-                            return __generator(this, function (_a) {
-                                switch (_a.label) {
-                                    case 0:
-                                        checkFunction = function (interaction) { return __awaiter(_this, void 0, void 0, function () {
-                                            return __generator(this, function (_a) {
-                                                switch (_a.label) {
-                                                    case 0:
-                                                        if (!interaction.isButton())
-                                                            return [2 /*return*/];
-                                                        if (!(interaction.customId == "decline")) return [3 /*break*/, 3];
-                                                        __1.client.removeListener("interactionCreate", checkFunction);
-                                                        return [4 /*yield*/, __1.client.channels
-                                                                .fetch(interaction.channelId)];
-                                                    case 1: return [4 /*yield*/, (_a.sent()).messages
-                                                            .fetch(interaction.message.id)];
-                                                    case 2:
-                                                        (_a.sent()).delete().catch(function (err) { });
-                                                        resolve(false);
-                                                        _a.label = 3;
-                                                    case 3:
-                                                        if (interaction.customId != "confirm")
-                                                            return [2 /*return*/];
-                                                        __1.client.removeListener("interactionCreate", checkFunction);
-                                                        return [4 /*yield*/, __1.client.channels
-                                                                .fetch(interaction.channelId)];
-                                                    case 4: return [4 /*yield*/, (_a.sent()).messages
-                                                            .fetch(interaction.message.id)];
-                                                    case 5:
-                                                        (_a.sent()).delete().catch(function (err) { });
-                                                        resolve(true);
-                                                        return [2 /*return*/];
-                                                }
-                                            });
-                                        }); };
-                                        return [4 /*yield*/, msg.channel.send({
-                                                embeds: [new discord_js_1.MessageEmbed({
-                                                        title: "Confirm new Entry",
-                                                        description: "are you sure, that you want to add ```" + content + "``` to the blacklist?"
-                                                    })],
-                                                components: [new discord_js_1.MessageActionRow({
-                                                        components: [new discord_js_1.MessageButton({
-                                                                customId: "confirm",
-                                                                style: "SUCCESS",
-                                                                label: "Submit"
-                                                            }), new discord_js_1.MessageButton({
-                                                                customId: "decline",
-                                                                style: "DANGER",
-                                                                label: "Decline"
-                                                            })]
-                                                    })]
-                                            }).catch(function (err) { return console.log(err); })];
-                                    case 1:
-                                        _a.sent();
-                                        __1.client.addListener("interactionCreate", checkFunction);
-                                        return [2 /*return*/];
-                                }
-                            });
-                        }); })];
-                case 1:
-                    confirm = _a.sent();
-                    console.log(confirm);
-                    if (!confirm)
-                        return [2 /*return*/];
-                    links = JSON.parse(fs_1.readFileSync(__dirname + "/../__shared/data/links.json", "utf-8").toString());
-                    links.push(content);
-                    fs_1.writeFileSync(__dirname + "/../__shared/data/links.json", JSON.stringify(links));
-                    msg.react("<a:tick:878028360977113119>");
                     return [2 /*return*/];
             }
         });
     });
 }
 exports.handleCommands = handleCommands;
-function authMember(member) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            if (!member)
-                return [2 /*return*/, false];
-            if (member.id == JSON.parse(fs_1.readFileSync(__dirname + "/../../config.json", "utf-8")).ownerID)
-                return [2 /*return*/, true];
-            return [2 /*return*/, false];
-        });
-    });
-}

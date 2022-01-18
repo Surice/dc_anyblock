@@ -37,32 +37,51 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.checkMemberUsername = void 0;
+var discord_js_1 = require("discord.js");
 var fs_1 = require("fs");
 var __1 = require("..");
 var config = JSON.parse(fs_1.readFileSync(__dirname + "/../../config.json", "utf-8").toString());
 function checkMemberUsername(member) {
     var _a;
     return __awaiter(this, void 0, void 0, function () {
-        var usernameList, logChannel_1;
-        var _this = this;
+        var guildConfigs, guildConfig, usernameList, adminLog, guildLog;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    usernameList = JSON.parse(fs_1.readFileSync(__dirname + "/../__shared/data/usernames.json").toString());
-                    if (!usernameList.includes((_a = member.user) === null || _a === void 0 ? void 0 : _a.username)) return [3 /*break*/, 2];
-                    if (!member.bannable)
+                    guildConfigs = JSON.parse(fs_1.readFileSync(__dirname + "/../__shared/data/guilds.json").toString()), guildConfig = guildConfigs[member.guild.id];
+                    if (!guildConfig.usernameCheckEnabled)
                         return [2 /*return*/];
-                    return [4 /*yield*/, __1.client.channels.fetch(config.logChannelId)];
+                    usernameList = JSON.parse(fs_1.readFileSync(__dirname + "/../__shared/data/usernames.json").toString());
+                    if (!usernameList.includes((_a = member.user) === null || _a === void 0 ? void 0 : _a.username)) return [3 /*break*/, 4];
+                    return [4 /*yield*/, __1.client.channels.fetch(config.adminLogId)];
                 case 1:
-                    logChannel_1 = _b.sent();
-                    member.ban().then(function (member) { return __awaiter(_this, void 0, void 0, function () {
-                        return __generator(this, function (_a) {
-                            logChannel_1.send("banned: " + member.user.tag);
-                            return [2 /*return*/];
-                        });
-                    }); });
-                    _b.label = 2;
-                case 2: return [2 /*return*/];
+                    adminLog = _b.sent();
+                    if (!guildConfig.guildLog) return [3 /*break*/, 3];
+                    return [4 /*yield*/, __1.client.channels.fetch(guildConfig.guildLog)];
+                case 2:
+                    guildLog = _b.sent();
+                    guildLog.send({ embeds: [new discord_js_1.MessageEmbed({
+                                title: "⚠Action recommended!⚠",
+                                description: "criticle User found: <@" + member.id + "> [" + member.user.tag + "]",
+                                footer: {
+                                    text: "ID: " + member.id,
+                                    iconURL: member.user.displayAvatarURL({ dynamic: true })
+                                }
+                            })] });
+                    _b.label = 3;
+                case 3:
+                    adminLog.send({ embeds: [new discord_js_1.MessageEmbed({
+                                author: {
+                                    name: member.guild.name,
+                                    iconURL: member.guild.iconURL({ dynamic: true }) || ""
+                                },
+                                description: "criticle User found: " + member.user.tag,
+                                footer: {
+                                    text: "UserID: " + member.id + " | GuildID: " + member.guild.id
+                                }
+                            })] });
+                    _b.label = 4;
+                case 4: return [2 /*return*/];
             }
         });
     });

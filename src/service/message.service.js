@@ -36,50 +36,86 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkMessageContent = void 0;
+exports.handleMessage = void 0;
 var discord_js_1 = require("discord.js");
 var fs_1 = require("fs");
 var __1 = require("..");
 var command_service_1 = require("./command.service");
 var config = JSON.parse(fs_1.readFileSync(__dirname + "/../../config.json", "utf-8").toString());
-function checkMessageContent(msg) {
+function handleMessage(msg) {
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function () {
-        var linkList;
-        return __generator(this, function (_a) {
-            if (msg.mentions.has(__1.client.user)) {
-                console.log("Command detected");
+        var linkList, guildConfigs, guildConfig;
+        return __generator(this, function (_c) {
+            if (!msg.guild)
+                return [2 /*return*/];
+            if (msg.mentions.has(__1.client.user) && ((_a = msg.mentions.users.first()) === null || _a === void 0 ? void 0 : _a.id) == ((_b = __1.client.user) === null || _b === void 0 ? void 0 : _b.id) && msg.content.startsWith("<@")) {
                 command_service_1.handleCommands(msg);
                 return [2 /*return*/];
             }
-            console.log("loading blacklist");
-            linkList = JSON.parse(fs_1.readFileSync(__dirname + "/../__shared/data/links.json").toString());
-            if (msg.content.includes("@everyone") && !msg.mentions.everyone)
-                sanction(msg);
+            linkList = JSON.parse(fs_1.readFileSync(__dirname + "/../__shared/data/links.json").toString()), guildConfigs = JSON.parse(fs_1.readFileSync(__dirname + "/../__shared/data/guilds.json").toString()), guildConfig = guildConfigs[msg.guild.id];
+            if (guildConfig.blockUnauthorizedEveryoneEnabled && msg.content.includes("@everyone") && !msg.mentions.everyone)
+                sanction(msg, "unathorized everyone mention", guildConfig.guildLog);
             msg.content.split(' ').forEach(function (item) {
-                if (linkList.includes(item)) {
-                    sanction(msg);
+                var _a, _b, _c, _d, _e;
+                if (guildConfig.scamlinkCheckEnabled) {
+                    if (linkList.includes(item)) {
+                        sanction(msg, "blocked link was posted", guildConfig.guildLog);
+                    }
+                }
+                if (guildConfig.globalLinkBlockEnabled && !((_a = guildConfig.linkAllowedChannel) === null || _a === void 0 ? void 0 : _a.includes(msg.channelId))) {
+                    if (!((_b = guildConfig.linkWhitelist) === null || _b === void 0 ? void 0 : _b.includes(item)))
+                        sanction(msg, "link posted", guildConfig.guildLog);
+                }
+                else if ((_c = guildConfig.linkBlockChannel) === null || _c === void 0 ? void 0 : _c.includes(msg.channelId)) {
+                    if (!((_d = guildConfig.linkWhitelist) === null || _d === void 0 ? void 0 : _d.includes(item)))
+                        sanction(msg, "link posted", guildConfig.guildLog);
+                }
+                else {
+                    if ((_e = guildConfig.linkBlacklist) === null || _e === void 0 ? void 0 : _e.includes(item))
+                        sanction(msg, "blacklisted link posted", guildConfig.guildLog);
                 }
             });
             return [2 /*return*/];
         });
     });
 }
-exports.checkMessageContent = checkMessageContent;
-function sanction(msg) {
+exports.handleMessage = handleMessage;
+function sanction(msg, reason, guildLogId) {
     var _this = this;
     msg.delete().then(function () { return __awaiter(_this, void 0, void 0, function () {
-        var logChannel, embed;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, __1.client.channels.fetch(config.logChannelId)];
+        var adminLog, guildLog, embed;
+        var _a, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0: return [4 /*yield*/, __1.client.channels.fetch(config.adminLogId)];
                 case 1:
-                    logChannel = _a.sent();
+                    adminLog = _c.sent();
+                    if (!guildLogId) return [3 /*break*/, 3];
+                    return [4 /*yield*/, __1.client.channels.fetch(guildLogId)];
+                case 2:
+                    guildLog = _c.sent();
+                    guildLog.send({ embeds: [new discord_js_1.MessageEmbed({
+                                title: "Action executed!",
+                                author: {
+                                    name: msg.author.tag + " - " + msg.author.id,
+                                    iconURL: msg.author.displayAvatarURL({ dynamic: true })
+                                },
+                                description: "**Type: " + reason + "**",
+                                fields: [{ name: "Message", value: msg.content }],
+                                footer: {
+                                    text: "channel: " + msg.channel.name + " | ID: " + msg.channel.id,
+                                    iconURL: (_a = __1.client.user) === null || _a === void 0 ? void 0 : _a.displayAvatarURL({ dynamic: true })
+                                }
+                            })] });
+                    _c.label = 3;
+                case 3:
                     embed = new discord_js_1.MessageEmbed()
                         .setAuthor(msg.author.tag, msg.author.displayAvatarURL({ dynamic: true }))
-                        .setDescription("Deleted message in <#" + msg.channel.id + ">")
+                        .setDescription("Deleted message on " + ((_b = msg.guild) === null || _b === void 0 ? void 0 : _b.name) + " in " + msg.channel.name)
                         .addField("Message Content:", msg.content)
                         .setFooter(msg.author.id, "");
-                    logChannel.send({ embeds: [embed] }).catch(function (err) { console.log("cannot send message"); });
+                    adminLog.send({ embeds: [embed] }).catch(function (err) { console.log("cannot send message"); });
                     return [2 /*return*/];
             }
         });
