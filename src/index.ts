@@ -20,5 +20,7 @@ client.on('ready', async () => {
 client.on('messageCreate', handleMessage);
 
 client.on('guildMemberAdd', (member: GuildMember) => {
+    if(config.dev && member.guild.id != "828395681714536450") return;
+
     checkMemberUsername(member);
 });

@@ -1,4 +1,4 @@
-interface GuildConfig {
+export class GuildConfig {
     usernameCheckEnabled?: boolean;
     scamlinkCheckEnabled?: boolean;
     globalLinkBlockEnabled?: boolean;

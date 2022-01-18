@@ -1,7 +1,7 @@
 import { Interaction, Message, MessageActionRow, MessageButton, MessageEmbed, TextChannel } from "discord.js";
 import { readFileSync, writeFileSync } from "fs";
 import { client } from "..";
-import { verification } from "../service/verification.service";
+import { verification } from "../service/response.service";
 
 export async function adminMain(msg: Message, content: string[]): Promise<void> {
     switch (content[0]) {
@@ -12,23 +12,39 @@ export async function adminMain(msg: Message, content: string[]): Promise<void> 
             }
         
             //verification
-            let confirm = verification(msg.channel as TextChannel, content[1], "blocked links");
-            if (!confirm) return;
+            let confirmUsername = verification(msg.channel as TextChannel, "are you sure, that you want to add ```" + content[1] + "```"+` to the critical usernames?`);
+            if (!confirmUsername) return;
         
-            let links: string[] = JSON.parse(readFileSync(`${__dirname}/../__shared/data/links.json`, "utf-8").toString());
+            let usernames: string[] = JSON.parse(readFileSync(`${__dirname}/../__shared/data/usernames.json`, "utf-8").toString());
         
-            links.push(content.join(' '));
+            usernames.push(content.slice(1).join(' '));
         
-            writeFileSync(`${__dirname}/../__shared/data/links.json`, JSON.stringify(links));
+            writeFileSync(`${__dirname}/../__shared/data/usernames.json`, JSON.stringify(usernames));
         
             msg.react("<a:tick_purple:839863280506896404>");
             break;
 
         case "addLink":
-
+            if(!content[1]) {
+                msg.reply("please provide more parameters").catch(err => console.log(err));
+                return;
+            }
+        
+            //verification
+            let confirmLink = verification(msg.channel as TextChannel, "are you sure, that you want to add ```" + content[1] + "```"+` to the scamlink list`);
+            if (!confirmLink) return;
+        
+            let links: string[] = JSON.parse(readFileSync(`${__dirname}/../__shared/data/usernames.json`, "utf-8").toString());
+        
+            links.push(content.slice(1).join(' '));
+        
+            writeFileSync(`${__dirname}/../__shared/data/usernames.json`, JSON.stringify(links));
+        
+            msg.react("<a:tick_purple:839863280506896404>");
             break;
     
         default:
+            msg.reply(`admin command ${content[0]} not found!`);
             break;
     }
 }

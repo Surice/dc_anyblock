@@ -1,7 +1,6 @@
-import { GuildMember, Interaction, Message, MessageActionRow, MessageButton, MessageEmbed, TextChannel } from "discord.js";
-import { readFileSync, writeFileSync } from "fs";
-import { client } from "..";
+import { GuildMember, Message } from "discord.js";
 import { adminMain } from "../commands/admin.command";
+import { setup } from "../commands/setup.command";
 import { authMember } from "./auth.service";
 
 export async function handleCommands(msg: Message): Promise<void> {
@@ -17,5 +16,16 @@ export async function handleCommands(msg: Message): Promise<void> {
         return;
     }
 
+    switch (content[0]) {
+        case "setup":
+            setup(msg, content.slice(1));
+            break;
 
+        case "info":
+
+            break;
+        default:
+            msg.reply("Commmand not found!");
+            break;
+    }
 }

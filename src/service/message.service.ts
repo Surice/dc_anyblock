@@ -8,10 +8,12 @@ import { handleCommands } from "./command.service";
 const config = JSON.parse(readFileSync(`${__dirname}/../../config.json`, "utf-8").toString());
 
 export async function handleMessage(msg: Message): Promise<void> {
+    if(config.dev && msg.guild?.id != "828395681714536450") return;
+
     if(!msg.guild) return;
 
     if(msg.mentions.has(client.user as User) && msg.mentions.users.first()?.id == client.user?.id && msg.content.startsWith("<@")) {
-        handleCommands(msg);
+        await handleCommands(msg);
         return;
     }
 
@@ -21,24 +23,24 @@ export async function handleMessage(msg: Message): Promise<void> {
         guildConfig = guildConfigs[msg.guild.id];
 
 
-    if(guildConfig.blockUnauthorizedEveryoneEnabled && msg.content.includes("@everyone") && !msg.mentions.everyone) sanction(msg, "unathorized everyone mention", guildConfig.guildLog);
+    if(guildConfig?.blockUnauthorizedEveryoneEnabled && msg.content.includes("@everyone") && !msg.mentions.everyone) sanction(msg, "unathorized everyone mention", guildConfig?.guildLog);
     
 
     msg.content.split(' ').forEach(item => {
-        if(guildConfig.scamlinkCheckEnabled) {
+        if(guildConfig?.scamlinkCheckEnabled) {
             if (linkList.includes(item)) {
-                sanction(msg, "blocked link was posted", guildConfig.guildLog);
+                sanction(msg, "blocked link was posted", guildConfig?.guildLog);
             }
         }
 
-        if(guildConfig.globalLinkBlockEnabled && !guildConfig.linkAllowedChannel?.includes(msg.channelId)) {
-            if(!guildConfig.linkWhitelist?.includes(item)) sanction(msg, "link posted", guildConfig.guildLog);
+        if(guildConfig?.globalLinkBlockEnabled && !guildConfig?.linkAllowedChannel?.includes(msg.channelId)) {
+            if(!guildConfig?.linkWhitelist?.includes(item)) sanction(msg, "link posted", guildConfig?.guildLog);
         }
-        else if(guildConfig.linkBlockChannel?.includes(msg.channelId)) {
-            if(!guildConfig.linkWhitelist?.includes(item)) sanction(msg, "link posted", guildConfig.guildLog);
+        else if(guildConfig?.linkBlockChannel?.includes(msg.channelId)) {
+            if(!guildConfig?.linkWhitelist?.includes(item)) sanction(msg, "link posted", guildConfig?.guildLog);
         }
         else {
-            if(guildConfig.linkBlacklist?.includes(item)) sanction(msg, "blacklisted link posted", guildConfig.guildLog);
+            if(guildConfig?.linkBlacklist?.includes(item)) sanction(msg, "blacklisted link posted", guildConfig?.guildLog);
         }
 
     });

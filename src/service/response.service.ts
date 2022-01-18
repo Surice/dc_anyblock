@@ -1,7 +1,7 @@
-import { Interaction, TextChannel, MessageEmbed, MessageActionRow, MessageButton } from "discord.js";
+import { Interaction, TextChannel, MessageEmbed, MessageActionRow, MessageButton, Message, ContextMenuInteraction } from "discord.js";
 import { client } from "..";
 
-export async function verification(channel: TextChannel, link: string, type: string): Promise<boolean> {
+export async function verification(channel: TextChannel, content: string): Promise<boolean> {
     const confirm: boolean = await new Promise(async (resolve) => {
         let checkFunction = async (interaction: Interaction) => {
             if (!interaction.isButton()) return;
@@ -31,7 +31,7 @@ export async function verification(channel: TextChannel, link: string, type: str
         await channel.send({
             embeds: [new MessageEmbed({
                 title: "Confirm new Entry",
-                description: "are you sure, that you want to add ```" + link + "```"+` to the ${type}?`
+                description: content
             })],
             components: [new MessageActionRow({
                 components: [new MessageButton({
@@ -50,4 +50,26 @@ export async function verification(channel: TextChannel, link: string, type: str
     });
 
     return confirm;
+}
+
+export async function checkResponse(inMessage: Message, message: string): Promise<string | undefined> {
+    let answer: string | undefined = await new Promise(async resolve => {
+        await inMessage.channel.send(message);
+
+        let checkFunction = async (answerMsg: Message) => {
+            if (answerMsg.channel.id != inMessage.channel.id) return;
+            if (answerMsg.author.id != inMessage.author.id) return;
+
+            resolve(answerMsg.content);
+            client.removeListener("messageCreate", checkFunction);
+        };
+
+        client.addListener("messageCreate", checkFunction);
+        setTimeout(() => {
+            client.removeListener("messageCreate", checkFunction);
+            resolve(undefined);
+        }, 60000);
+    });
+
+    return answer;
 }

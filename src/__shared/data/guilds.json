@@ -1,1 +1,9 @@
-{}
+{
+    "828395681714536450": {
+        "guildLog": "832549750224977920",
+        "usernameCheckEnabled": true,
+        "scamlinkCheckEnabled": true,
+        "globalLinkBlockEnabled": false,
+        "blockUnauthorizedEveryoneEnabled": true
+    }
+}
