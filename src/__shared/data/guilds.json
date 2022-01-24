@@ -3,7 +3,7 @@
         "guildLog": "832549750224977920",
         "usernameCheckEnabled": true,
         "scamlinkCheckEnabled": true,
-        "globalLinkBlockEnabled": false,
+        "globalLinkBlockEnabled": true,
         "blockUnauthorizedEveryoneEnabled": true
     }
 }

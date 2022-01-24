@@ -73,3 +73,8 @@ export async function checkResponse(inMessage: Message, message: string): Promis
 
     return answer;
 }
+
+export function compareStrings(item: string, dataArray?: string[]) {
+    if(!dataArray) return;
+    return dataArray.some(itemOfArray => item.toLowerCase().startsWith(itemOfArray.toLowerCase()));
+  }

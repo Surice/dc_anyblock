@@ -1,6 +1,6 @@
 import { Message, TextChannel } from "discord.js";
 import { fstat, readFileSync, writeFileSync } from "fs";
-import { checkResponse, verification } from "../service/response.service";
+import { checkResponse, verification } from "../service/_default.service";
 import { GuildConfig, GuildConfigs } from "../__shared/models/guildConfig.model";
 
 export async function setup(msg: Message, content: string[]): Promise<void> {
