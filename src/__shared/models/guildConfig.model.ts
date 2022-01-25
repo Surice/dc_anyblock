@@ -10,6 +10,9 @@ export class GuildConfig {
     linkAllowedChannel?: string[];
     linkWhitelist?: string[];
     linkBlacklist?: string[];
+
+    superusers?: string[];
+    ignoredRoles?: string[];
 }
 
 export class GuildConfigs {

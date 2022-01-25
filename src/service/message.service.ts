@@ -1,7 +1,8 @@
-import { Message, MessageEmbed, TextChannel, User } from "discord.js";
+import { GuildMember, Message, MessageEmbed, TextChannel, User } from "discord.js";
 import { readFileSync } from "fs";
 import { client } from "..";
 import { GuildConfigs } from "../__shared/models/guildConfig.model";
+import { authMember } from "./auth.service";
 import { handleCommands } from "./command.service";
 import { compareStrings } from "./_default.service";
 
@@ -10,12 +11,10 @@ const config = JSON.parse(readFileSync(`${__dirname}/../../config.json`, "utf-8"
 
 export async function handleMessage(msg: Message): Promise<void> {
     if (config.dev && msg.guild?.id != "828395681714536450") return;
-
     if (!msg.guild) return;
 
     if (msg.mentions.has(client.user as User) && msg.mentions.users.first()?.id == client.user?.id && msg.content.startsWith("<@")) {
         await handleCommands(msg);
-        return;
     }
 
 
@@ -23,6 +22,8 @@ export async function handleMessage(msg: Message): Promise<void> {
         guildConfigs: GuildConfigs = JSON.parse(readFileSync(`${__dirname}/../__shared/data/guilds.json`).toString()),
         guildConfig = guildConfigs[msg.guild.id];
 
+    const perms = await authMember(msg.member as GuildMember, guildConfig);
+    if(perms) return;
 
     if (guildConfig?.blockUnauthorizedEveryoneEnabled && msg.content.includes("@everyone") && !msg.mentions.everyone) sanction(msg, "unathorized everyone mention", guildConfig?.guildLog);
 
