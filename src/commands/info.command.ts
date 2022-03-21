@@ -9,6 +9,7 @@ export async function info(msg: Message, content: string[]): Promise<void> {
 
     if(!gc) {
         msg.reply("there is no configuration. \nPlease run `<@"+client.user?.id+"> setup`");
+        return;
     }
 
     let embed = new MessageEmbed()
