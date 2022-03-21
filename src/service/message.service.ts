@@ -18,8 +18,8 @@ export async function handleMessage(msg: Message): Promise<void> {
     }
 
 
-    const linkList: string[] = JSON.parse(readFileSync(`./__shared/data/links.json`).toString()),
-        guildConfigs: GuildConfigs = JSON.parse(readFileSync(`./__shared/data/guilds.json`).toString()),
+    const linkList: string[] = JSON.parse(readFileSync(`${__dirname}/../__shared/data/links.json`).toString()),
+        guildConfigs: GuildConfigs = JSON.parse(readFileSync(`${__dirname}/../__shared/data/guilds.json`).toString()),
         guildConfig = guildConfigs[msg.guild.id];
 
     const perms = await authMember(msg.member as GuildMember, guildConfig);
