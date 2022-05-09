@@ -3,11 +3,9 @@ import { readFileSync } from "fs";
 import { Config } from "../__shared/models/config.model";
 import { GuildConfig } from "../__shared/models/guildConfig.model";
 
-export async function authMember(member: GuildMember, guildConfig?: GuildConfig): Promise<string | boolean> {
-    if (!member) return false;
-
-    if (member.id == (JSON.parse(readFileSync(`${__dirname}/../../config.json`, "utf-8"))as Config).ownerID) return "owner";
-    if(member.permissions.has('ADMINISTRATOR')) return 'admin';
+export async function authMember(member: GuildMember, guildConfig: GuildConfig): Promise<number | undefined> {
+    if (member.id == (JSON.parse(readFileSync(`${__dirname}/../../config.json`, "utf-8"))as Config).ownerID) return 99;
+    if(member.permissions.has('ADMINISTRATOR')) return 2;
 
     let superuser: boolean = false;
     guildConfig?.superusers?.forEach((superRole: string) => {
@@ -15,7 +13,7 @@ export async function authMember(member: GuildMember, guildConfig?: GuildConfig)
             superuser = true;
         }
     });
-    if(superuser) return "admin";
+    if(superuser) return 2;
 
     let ignoredUser: boolean = false;
     guildConfig?.ignoredRoles?.forEach((ignoredRole: string) => {
@@ -23,7 +21,5 @@ export async function authMember(member: GuildMember, guildConfig?: GuildConfig)
             ignoredUser = true;
         }
     });
-    if(ignoredUser) return "ignoredUser";
-
-    return false;
+    if(ignoredUser) return 1;
 }

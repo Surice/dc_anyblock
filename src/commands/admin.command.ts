@@ -1,7 +1,6 @@
-import { Interaction, Message, MessageActionRow, MessageButton, MessageEmbed, TextChannel } from "discord.js";
+import { Message, TextChannel } from "discord.js";
 import { readFileSync, writeFileSync } from "fs";
-import { client } from "..";
-import { verification } from "../service/_default.service";
+import { verification } from "../service/response.service";
 
 export async function adminMain(msg: Message, content: string[]): Promise<void> {
     switch (content[0]) {
