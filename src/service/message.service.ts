@@ -18,6 +18,7 @@ export function sanction(msg: Message, reason: string, guildLogId?: string) {
             guildLog.send({
                 embeds: [new MessageEmbed({
                     title: "Action executed!",
+                    color: 'RED',
                     author: {
                         name: `${message.author.tag} - ${message.author.id}`,
                         iconURL: message.author.displayAvatarURL({ dynamic: true })
@@ -33,6 +34,7 @@ export function sanction(msg: Message, reason: string, guildLogId?: string) {
         }
         let embed: MessageEmbed = new MessageEmbed()
             .setAuthor(message.author.tag, message.author.displayAvatarURL({ dynamic: true }))
+            .setColor('RED')
             .setDescription(`Deleted message on ${message.guild?.name} in ${(message.channel as TextChannel).name}`)
             .addField("Message Content:", message.content)
             .setFooter(`Author ID: ${message.author.id}`, "");

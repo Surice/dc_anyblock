@@ -22,6 +22,7 @@ export async function checkMemberUsername(member: GuildMember): Promise<void> {
 
             guildLog.send({embeds: [new MessageEmbed({
                 title: "⚠Action recommended!⚠",
+                color: 'YELLOW',
                 description: `criticle User found: <@${member.id}> [${member.user.tag}]`,
                 footer: {
                     text: `ID: ${member.id}`,
@@ -35,6 +36,7 @@ export async function checkMemberUsername(member: GuildMember): Promise<void> {
                 name: member.guild.name,
                 iconURL: member.guild.iconURL({dynamic: true}) || ""
             },
+            color: 'RED',
             description: `criticle User found: ${member.user.tag}`,
             footer: {
                 text: `UserID: ${member.id} | GuildID: ${member.guild.id}`
